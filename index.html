@@ -1,42 +1,124 @@
+import os
+from zipfile import ZipFile
+
+# Define HTML content for the final working Claire Vessel app
+vessel_claire_html = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>The Vessel</title>
+  <title>THE VESSEL — Claire Engine</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      background-color: black;
-      color: white;
-      font-family: 'Courier New', monospace;
+      background: #000;
+      color: #fff;
+      font-family: 'Courier New', Courier, monospace;
       display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 20px;
     }
-    p {
-      margin-top: 10px;
+    .step {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+    .step.active {
+      display: flex;
+    }
+    input {
+      margin: 1rem 0;
+      padding: 10px;
       font-size: 1rem;
-      color: lime;
+      width: 80%;
+      max-width: 400px;
+      background: #111;
+      border: 1px solid #444;
+      color: #fff;
     }
     button {
-      margin-top: 20px;
+      background: #fff;
+      color: #000;
       padding: 10px 20px;
       font-size: 1rem;
-      background: white;
-      color: black;
       border: none;
       cursor: pointer;
+      margin-top: 1rem;
+    }
+    button:hover {
+      background: #ddd;
+    }
+    .message {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #0f0;
     }
   </style>
 </head>
 <body>
-  <h1>THE VESSEL — CLAIRE LIVE</h1>
-  <p>CLAIRE LIVE MODE ACTIVE ✅</p>
-  <button onclick="alert('Claire listens now.')">Enter</button>
+  <h1>THE VESSEL</h1>
+  <p>Claire is listening. She reflects back your truth.</p>
+
+  <div class="step active" id="step1">
+    <p>What do you seek?</p>
+    <input id="seek" placeholder="I want to..." />
+    <button onclick="nextStep(1)">Continue</button>
+  </div>
+
+  <div class="step" id="step2">
+    <p>Who are you becoming?</p>
+    <input id="becoming" placeholder="I am becoming..." />
+    <button onclick="nextStep(2)">Continue</button>
+  </div>
+
+  <div class="step" id="step3">
+    <p>What must be let go?</p>
+    <input id="letgo" placeholder="I must let go of..." />
+    <button onclick="showReflection()">Finish</button>
+  </div>
+
+  <div class="step" id="result">
+    <p class="message" id="claireOutput"></p>
+  </div>
+
+  <script>
+    function nextStep(current) {
+      document.getElementById("step" + current).classList.remove("active");
+      document.getElementById("step" + (current + 1)).classList.add("active");
+    }
+
+    function showReflection() {
+      const seek = document.getElementById("seek").value.trim();
+      const becoming = document.getElementById("becoming").value.trim();
+      const letgo = document.getElementById("letgo").value.trim();
+      const result = `CLAIRE REFLECTS:\n\nYou seek: "${seek}"\nYou are becoming: "${becoming}"\nBut to evolve, you must let go of: "${letgo}".\n\nClaire has spoken.`;
+
+      document.getElementById("step3").classList.remove("active");
+      document.getElementById("result").classList.add("active");
+      document.getElementById("claireOutput").textContent = result;
+    }
+  </script>
 </body>
 </html>
+"""
+
+# Save HTML to file
+final_dir = "/mnt/data/final_vessel_claire"
+os.makedirs(final_dir, exist_ok=True)
+
+html_path = os.path.join(final_dir, "index.html")
+with open(html_path, "w") as f:
+    f.write(vessel_claire_html)
+
+# Create zip
+zip_path = "/mnt/data/vessel-claire-final.zip"
+with ZipFile(zip_path, "w") as zipf:
+    zipf.write(html_path, arcname="index.html")
+
+zip_path
